@@ -73,7 +73,7 @@ pub fn format_error_message(
         message.push('-');
     }
     message.push_str("^ Error here\n");
-    message.push_str("\n");
+    message.push('\n');
     message.push_str(error_message);
 
     message

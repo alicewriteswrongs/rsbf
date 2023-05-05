@@ -1,6 +1,6 @@
 use super::error::{format_error_message, ParseError, ParseErrors};
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Eq, PartialEq)]
 pub enum BFCommand {
     DataPtrIncrement,
     DataPtrDecrement,
@@ -51,12 +51,12 @@ pub fn parse(code: String) -> Result<Vec<BFCommand>, ParseErrors> {
             }
             '.' => bf_commands.push(BFCommand::OutputByte),
             ',' => bf_commands.push(BFCommand::InputByte),
-            '\n' => line_number = line_number + 1,
+            '\n' => line_number +=1,
             _ => {}
         }
     }
 
-    if goto_indices.len() != 0 {
+    if !goto_indices.is_empty() {
         // there was an unmatched opening [
         parse_errors
             .errors
@@ -68,7 +68,7 @@ pub fn parse(code: String) -> Result<Vec<BFCommand>, ParseErrors> {
             )));
     }
 
-    if parse_errors.errors.len() == 0 {
+    if parse_errors.errors.is_empty() {
         Ok(bf_commands)
     } else {
         Err(parse_errors)
