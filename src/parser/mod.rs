@@ -1,4 +1,4 @@
 mod error;
-mod parser;
+mod parse;
 
-pub use parser::parse;
+pub use parse::parse;
