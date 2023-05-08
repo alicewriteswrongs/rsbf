@@ -1,5 +1,4 @@
 mod error;
 mod parse;
 
-pub use parse::parse;
-pub use parse::BFCommand;
+pub use parse::{parse, print_bf_commands, BFCommand};

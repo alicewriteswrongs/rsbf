@@ -15,7 +15,7 @@ fn main() -> anyhow::Result<()> {
     let contents = std::fs::read_to_string(&args.filename)?;
 
     let commands = parser::parse(contents)?;
-    println!("{:?}", commands);
+    parser::print_bf_commands(&commands);
     interpreter::interpret(commands)?;
     Ok(())
 }

@@ -38,7 +38,13 @@ impl ParseErrors {
 impl Display for ParseErrors {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         // Format your error message
-        write!(f, "Custom error message")
+        write!(f, "Had some errors")?;
+
+        for error in self.errors.iter() {
+            write!(f, "{}", error)?;
+        }
+
+        Ok(())
     }
 }
 

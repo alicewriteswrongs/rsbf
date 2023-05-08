@@ -12,9 +12,15 @@ pub enum BFCommand {
     BackwardGoto(usize),
 }
 
+pub fn print_bf_commands(bf_commands: &Vec<BFCommand>) {
+    for (i, command) in bf_commands.iter().enumerate() {
+        println!("{}: {:?}", i, command);
+    }
+}
+
 pub fn parse(code: String) -> Result<Vec<BFCommand>, ParseErrors> {
     let mut bf_commands: Vec<BFCommand> = vec![];
-    let mut goto_indices: Vec<usize> = vec![];
+    let mut forward_goto_indices: Vec<usize> = vec![];
     let mut line_number = 1;
     let mut parse_errors = ParseErrors::new();
 
@@ -32,17 +38,40 @@ pub fn parse(code: String) -> Result<Vec<BFCommand>, ParseErrors> {
                 // find the index of the next ']' character in the 'code' string starting from
                 // `index`
                 let mut closing_bracket_index = index;
-                for (i, c) in code[index..].chars().enumerate() {
+                let mut intervening_opening_brackets = 0;
+                let mut intervening_command_count = 0;
+
+                for (i, c) in code[(index)..].chars().enumerate() {
+                    if i == 0 {
+                        continue;
+                    }
+                    if c == '[' {
+                        // there's another pair of [] opening, so we need to keep track of that so
+                        // we know when the ']' we encounter is supposed to be matched with the one
+                        // we started with
+                        intervening_opening_brackets += 1;
+                    }
                     if c == ']' {
-                        closing_bracket_index = index + i;
-                        break;
+                        // if this is 0 then we're on the same 'level' as where we started
+                        if intervening_opening_brackets == 0 {
+                            break;
+                        } else {
+                            intervening_opening_brackets -= 1;
+                        }
+                    }
+                    // if c is a valid brainfuck command increment intervening_command_count
+                    let brainfuck_commands = ['>', '<', '+', '-', '[', ']', ',', '.'];
+                    if brainfuck_commands.iter().any(|&bf| bf == c) {
+                        intervening_command_count += 1;
                     }
                 }
-                bf_commands.push(BFCommand::ForwardGoto(closing_bracket_index));
-                goto_indices.push(index);
+                bf_commands.push(BFCommand::ForwardGoto(
+                    bf_commands.len() + intervening_command_count + 1,
+                ));
+                forward_goto_indices.push(bf_commands.len() - 1);
             }
             ']' => {
-                goto_indices.pop().map_or_else(
+                forward_goto_indices.pop().map_or_else(
                     || {
                         parse_errors
                             .errors
@@ -65,14 +94,14 @@ pub fn parse(code: String) -> Result<Vec<BFCommand>, ParseErrors> {
         }
     }
 
-    if !goto_indices.is_empty() {
+    if !forward_goto_indices.is_empty() {
         // there was an unmatched opening [
         parse_errors
             .errors
             .push(ParseError::new(&format_error_message(
                 &code,
                 line_number,
-                goto_indices.pop().unwrap(),
+                forward_goto_indices.pop().unwrap(),
                 "Found an opening '[' without a closing ']'",
             )));
     }
@@ -160,6 +189,29 @@ mod tests {
                 .unwrap()
                 .message,
             "Line 1: [\n--------^ Error here\n\nFound an opening '[' without a closing ']'"
+        );
+    }
+
+    #[test]
+    fn test_paren_matching() {
+        assert_eq!(
+            parse(String::from("[]")).unwrap(),
+            vec![BFCommand::ForwardGoto(1), BFCommand::BackwardGoto(0),]
+        );
+    }
+    #[test]
+    fn test_nested_paren_matching() {
+        assert_eq!(
+            parse(String::from("[+>[>]]")).unwrap(),
+            vec![
+                BFCommand::ForwardGoto(6),
+                BFCommand::Increment,
+                BFCommand::DataPtrIncrement,
+                BFCommand::ForwardGoto(5),
+                BFCommand::DataPtrIncrement,
+                BFCommand::BackwardGoto(3),
+                BFCommand::BackwardGoto(0),
+            ]
         );
     }
 }
