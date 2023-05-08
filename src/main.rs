@@ -1,3 +1,4 @@
+mod interpreter;
 mod parser;
 
 use clap::Parser;
@@ -15,5 +16,6 @@ fn main() -> anyhow::Result<()> {
 
     let commands = parser::parse(contents)?;
     println!("{:?}", commands);
+    interpreter::interpret(commands)?;
     Ok(())
 }

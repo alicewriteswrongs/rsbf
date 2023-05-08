@@ -8,7 +8,7 @@ pub enum BFCommand {
     Decrement,
     OutputByte,
     InputByte,
-    ForwardGoto,
+    ForwardGoto(usize),
     BackwardGoto(usize),
 }
 
@@ -29,7 +29,16 @@ pub fn parse(code: String) -> Result<Vec<BFCommand>, ParseErrors> {
             '+' => bf_commands.push(BFCommand::Increment),
             '-' => bf_commands.push(BFCommand::Decrement),
             '[' => {
-                bf_commands.push(BFCommand::ForwardGoto);
+                // find the index of the next ']' character in the 'code' string starting from
+                // `index`
+                let mut closing_bracket_index = index;
+                for (i, c) in code[index..].chars().enumerate() {
+                    if c == ']' {
+                        closing_bracket_index = index + i;
+                        break;
+                    }
+                }
+                bf_commands.push(BFCommand::ForwardGoto(closing_bracket_index));
                 goto_indices.push(index);
             }
             ']' => {
@@ -51,7 +60,7 @@ pub fn parse(code: String) -> Result<Vec<BFCommand>, ParseErrors> {
             }
             '.' => bf_commands.push(BFCommand::OutputByte),
             ',' => bf_commands.push(BFCommand::InputByte),
-            '\n' => line_number +=1,
+            '\n' => line_number += 1,
             _ => {}
         }
     }
