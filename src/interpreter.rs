@@ -13,7 +13,7 @@ impl BFDataBuffer {
 
     fn get(&self, index: usize) -> u8 {
         let val = self.inner.get(index).unwrap_or(&0);
-        return *val;
+        *val
     }
 
     fn set(&mut self, index: usize, value: u8) {
@@ -45,7 +45,7 @@ pub fn interpret(commands: Vec<BFCommand>) -> anyhow::Result<()> {
             BFCommand::Increment => {
                 let cur = data_buffer.get(data_pointer);
 
-                if (cur == 255) {
+                if cur == 255 {
                     data_buffer.set(data_pointer, 0);
                 } else {
                     data_buffer.set(data_pointer, cur + 1);
@@ -62,7 +62,7 @@ pub fn interpret(commands: Vec<BFCommand>) -> anyhow::Result<()> {
                 instruction_pointer += 1;
             }
             BFCommand::OutputByte => {
-                stdout.write(&[data_buffer.get(data_pointer)])?;
+                stdout.write_all(&[data_buffer.get(data_pointer)])?;
                 stdout.flush()?;
                 instruction_pointer += 1;
             }

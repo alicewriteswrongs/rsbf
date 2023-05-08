@@ -12,7 +12,7 @@ pub enum BFCommand {
     BackwardGoto(usize),
 }
 
-pub fn print_bf_commands(bf_commands: &Vec<BFCommand>) {
+pub fn print_bf_commands(bf_commands: &[BFCommand]) {
     for (i, command) in bf_commands.iter().enumerate() {
         println!("{}: {:?}", i, command);
     }
@@ -37,7 +37,6 @@ pub fn parse(code: String) -> Result<Vec<BFCommand>, ParseErrors> {
             '[' => {
                 // find the index of the next ']' character in the 'code' string starting from
                 // `index`
-                let mut closing_bracket_index = index;
                 let mut intervening_opening_brackets = 0;
                 let mut intervening_command_count = 0;
 
