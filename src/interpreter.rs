@@ -43,11 +43,22 @@ pub fn interpret(commands: Vec<BFCommand>) -> anyhow::Result<()> {
                 instruction_pointer += 1;
             }
             BFCommand::Increment => {
-                data_buffer.set(data_pointer, data_buffer.get(data_pointer) + 1);
+                let cur = data_buffer.get(data_pointer);
+
+                if (cur == 255) {
+                    data_buffer.set(data_pointer, 0);
+                } else {
+                    data_buffer.set(data_pointer, cur + 1);
+                }
                 instruction_pointer += 1;
             }
             BFCommand::Decrement => {
-                data_buffer.set(data_pointer, data_buffer.get(data_pointer) - 1);
+                let cur = data_buffer.get(data_pointer);
+                if cur > 0 {
+                    data_buffer.set(data_pointer, cur - 1);
+                } else {
+                    data_buffer.set(data_pointer, 255);
+                }
                 instruction_pointer += 1;
             }
             BFCommand::OutputByte => {
