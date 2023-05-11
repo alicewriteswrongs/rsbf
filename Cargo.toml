@@ -8,3 +8,13 @@ edition = "2021"
 [dependencies]
 clap = { version = "3", features = ["derive"] }
 anyhow = "1.0.71"
+wasm-bindgen = "0.2.85"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+name = "rsbf"
+path = "src/lib.rs"
+
+[[bin]]
+name = "rsbf-bin"
+path = "src/main.rs"
