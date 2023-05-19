@@ -16,13 +16,18 @@
 
       let brainfuck = "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.";
 
+      const outputBuffer = []
+      const addByteToBuffer = (byte) => {
+        outputBuffer.push(byte);
+      }
+
       async function run() {
         // this handles loading the wasm module?
         await init();
 
         // once that's done we can call the function
-        run_brainfuck(brainfuck);
-        console.log('eyyy');
+        run_brainfuck(brainfuck, addByteToBuffer);
+        console.log(outputBuffer.map(code => String.fromCodePoint(code)).join(""));
       }
 
       run();

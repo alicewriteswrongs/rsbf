@@ -1,5 +1,5 @@
 use crate::parser::BFCommand;
-use std::io::{self, Read, Write};
+use std::io::{self, Read};
 
 #[derive(Debug)]
 struct BFDataBuffer {
@@ -24,11 +24,10 @@ impl BFDataBuffer {
     }
 }
 
-pub fn interpret(commands: Vec<BFCommand>) -> anyhow::Result<()> {
+pub fn interpret(commands: Vec<BFCommand>, output_byte: &dyn Fn(u8)) -> anyhow::Result<()> {
     let mut data_buffer = BFDataBuffer::new();
     let mut data_pointer: usize = 0;
     let mut instruction_pointer: usize = 0;
-    let mut stdout = io::stdout();
 
     while let Some(command) = commands.get(instruction_pointer) {
         match command {
@@ -62,8 +61,7 @@ pub fn interpret(commands: Vec<BFCommand>) -> anyhow::Result<()> {
                 instruction_pointer += 1;
             }
             BFCommand::OutputByte => {
-                stdout.write_all(&[data_buffer.get(data_pointer)])?;
-                stdout.flush()?;
+                output_byte(data_buffer.get(data_pointer));
                 instruction_pointer += 1;
             }
             BFCommand::InputByte => {
