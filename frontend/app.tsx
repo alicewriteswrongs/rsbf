@@ -1,19 +1,19 @@
-import React from 'react';
-import { createRoot } from 'react-dom/client';
+import React from "react"
+import { createRoot } from "react-dom/client"
 
-import BrainfuckEnvironment from './components/BrainfuckInterpreter';
+import BrainfuckEnvironment from "./components/BrainfuckRepl"
 
-const app = document.querySelector("#app");
+const app = document.querySelector("#app")
 
 if (app) {
-  const root = createRoot(app);
-  root.render(<App /> );
-} else {
-  console.log('did not find');
+  const root = createRoot(app)
+  root.render(<App />)
 }
 
-function App () {
-  return <div>
-    <BrainfuckEnvironment />
-  </div>
+function App() {
+  return (
+    <div>
+      <BrainfuckEnvironment />
+    </div>
+  )
 }
