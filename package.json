@@ -1,13 +1,17 @@
 {
   "name": "rsbf",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
   "scripts": {
-    "build:wasm": "wasm-pack build --release --target web",
-    "dev:wasm": "http-server . --mimetypes mime-types.types"
+    "build:wasm": "wasm-pack build --release --target web && mv pkg wwww",
+    "dev": "esbuild frontend/app.tsx --outdir=www/ --bundle --servedir=www"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "@types/react": "^18.2.6",
+    "@types/react-dom": "^18.2.4",
+    "esbuild": "^0.17.19",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
 }
