@@ -16,7 +16,7 @@ fn main() -> anyhow::Result<()> {
     let contents = std::fs::read_to_string(args.filename)?;
 
     let commands = parser::parse(contents)?;
-    parser::print_bf_commands(&commands);
+    // parser::print_bf_commands(&commands);
 
     fn output_byte(byte: u8) {
         let mut stdout = io::stdout();
